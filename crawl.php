@@ -4,8 +4,9 @@
  /**
   * Crawl - Email Web Crawler
   *
-  * Copyright (C) 2012-2013 Jan Hendrik van Essen <cowthinker@gmail.com>
+  * Copyright (C) 2012-2013 icysheep <cowthinker@gmail.com>
   *	https://github.com/icysheep <<>> http://cowthink.net
+  *     twitter.com/icysheep
   *
   * This program is free software; you can redistribute it and/or modify
   * it under the terms of the GNU General Public License as published by
@@ -24,9 +25,9 @@
   */
  
     echo "==================================================\r\n";
-    echo " Welcome to Crawl 1.01 \r\n";
+    echo " Welcome to Crawl 1.02 \r\n";
     echo "==================================================\r\n";
-    echo " Make sure cURL is activated for best perfomance  \r\n";
+    echo " This script requires cURL to run on your system  \r\n";
     echo "==================================================\r\n";
     if(!isset($argv[2])) {
         echo " Usage: php ".$argv[0]." HOST r_Level\r\n";
@@ -37,23 +38,24 @@
     else {
         echo " Working... time depends on recursion level\r\n";
         echo "==================================================\r\n";
-        $start = new Crawl($argv[1], 0, $argv[2], array());
-        $start->printResult($start->start());
+        $start = new Crawl($argv[1], 0, $argv[2]);
+        $start->start();
         exit();
     }
+    
 	
 class Crawl{
 	
     /**
      * Constructor
-     * @param string $arg1, int $arg2, int $arg3, string $arg4
+     * @param string $arg1, int $arg2, int $arg3
      */
-    public function __construct($arg1, $arg2, $arg3, $arg4) {
+    public function __construct($arg1, $arg2, $arg3) {
         if(!$this->isCli()) die("Please use php-cli!");
+	if (!function_exists('curl_init')) die("Please activate cURL!");
         $this->hp = $arg1;
         $this->rlevel = $arg2;
         $this->rmax = $arg3;
-        $this->mails = $arg4;
     }
  
     /**
@@ -68,39 +70,22 @@ class Crawl{
      * Get the content of the current page ($this->hp)
      * @return string
      */
-    public function getContent() {
-        if (!function_exists('curl_init')){
-            $content=file_get_contents($this->hp, false, $this->getContext());
-        } else {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->hp);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $content = curl_exec($ch);
-            curl_close($ch);
-        }
+    private function getContent() {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->hp);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $content = curl_exec($ch);
+        curl_close($ch);
 	return $content;
     }
   
-    /**
-     * Get the context to open the FGC socket
-     * @return stream_context_resource
-     */
-    private function getContext() {
-        $opts = array(
-            'http' => array(
-                'method'=>"GET",
-                'header'=>"Content-Type: text/html; charset=utf-8"
-            )
-        );
-        return stream_context_create($opts);
-    }
 	
     /**
      * Use the content to create an email array
      * Make sure we don't save the same email address multiple times
      * @return array
      */
-    public  function getEmailArray() {
+    private  function getEmailArray() {
         $email_pattern_normal="(([-_.\w]+@[a-zA-Z0-9_]+?\.[a-zA-Z0-9]{2,6}))";
 	$email_pattern_exp1="(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})";
         preg_match_all($email_pattern_normal, $this->content, $result_email_normal, PREG_PATTERN_ORDER);
@@ -131,7 +116,7 @@ class Crawl{
      * Make sure to delete duplicate entries
      * @return array
      */
-    public function getURLArray() {
+    private function getURLArray() {
 	$url_pattern='((\:href=\"|(http(s?))\://){1}\S+)';
         preg_match_all($url_pattern, $this->content, $result_url, PREG_PATTERN_ORDER);
 	array_walk($result_url[0], function(&$item) { $item = substr($item, 0, strpos($item, '"')); });
@@ -154,33 +139,36 @@ class Crawl{
         }
         return $prefix_array;
     }
+
 	
     /**
-     * Temporarily function to print the result
+     * Prints the result in a readable way
+     * @param Email-Array $data
      */
-    public function printResult($data) {
-  	print_r($data);
+    private function printResult($data) {
+	foreach($data as $child) { echo "(RLevel ". $this->rlevel . ") Found: ". $child ."\n"; }
     }
 	
     /**
-     * Start function with recursion
+     * Start-function with recursion
      * Creates new instances depending on recursion depth
-     * Merges the obtained email addresses and returns them
+     * Prints all obtained emails
      * @return mails
      */
     public function start() {
+       $this->content = $this->getContent();
+       $this->urls = $this->getURLArray();
+       $mails = $this->getEmailArray();
+       $this->printResult($mails);
        if($this->rlevel<$this->rmax) {
-           $this->content = $this->getContent();
-           $this->urls = $this->getURLArray();
-           $mails = $this->getEmailArray();
            foreach($this->urls as $url) {
-              $temp = new Crawl($url, $this->rlevel+1, $this->rmax, $this->mails);
-              $this->mails = array_unique(array_merge($temp->start(), $mails));
+           	$temp = new Crawl($url, $this->rlevel+1, $this->rmax);
+		$temp->start();
            }
        }
-       return $this->mails;
     }
 }
 	
 ?>
+
 
