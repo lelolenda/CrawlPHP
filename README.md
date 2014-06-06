@@ -11,6 +11,6 @@ Screen
 Example usage:
 -------------
 
-test@trial~# php crawl.php https://www.robinsonliste.de/impressum 2
+$ php crawl.php https://www.robinsonliste.de/impressum 2
 
-Visit https://cowthink.net/projects/crawl-php-email-crawler/ for some additional details.
+Visit https://cowthink.org/projects/crawl-php-email-crawler/ for some additional details.

@@ -4,9 +4,9 @@
  /**
   * Crawl - Email Web Crawler
   *
-  * Copyright (C) 2012-2013 icysheep <cowthinker@gmail.com>
-  *	https://github.com/icysheep <<>> http://cowthink.net
-  *     twitter.com/icysheep
+  * Copyright (C) 2012-2014 Jan Hendrik van Essen <jhve@cowthink.org>
+  *	https://github.com/icysheep <<>> https://cowthink.org
+  *     
   *
   * This program is free software; you can redistribute it and/or modify
   * it under the terms of the GNU General Public License as published by
