@@ -4,7 +4,7 @@
  /**
   * Crawl - Email Web Crawler
   *
-  * Copyright (C) 2012-2014 Jan Hendrik van Essen <jhve@cowthink.org>
+  * Copyright (C) 2012-2014 Jan van Essen <jve@cowthink.org>
   *	https://github.com/icysheep <<>> https://cowthink.org
   *     
   *
