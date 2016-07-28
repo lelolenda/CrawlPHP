@@ -86,8 +86,8 @@ class Crawl{
      * @return array
      */
     private  function get_email_array() {
-      $email_pattern_normal="(([-_.\w]+@[a-zA-Z0-9_]+?\.[a-zA-Z0-9]{2,6}))";
-      $email_pattern_exp1="(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})";
+      $email_pattern_normal="((https?|ftp):((\/\/)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*\.mp3)";
+      $email_pattern_exp1="((https?|ftp):((\/\/)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*\.mp3)";
       preg_match_all($email_pattern_normal, $this->content, $result_email_normal, PREG_PATTERN_ORDER);
       preg_match_all($email_pattern_exp1, $this->content, $result_email_exp1, PREG_PATTERN_ORDER);
       $email_array=array_merge($result_email_normal, $result_email_exp1);
