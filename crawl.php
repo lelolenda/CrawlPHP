@@ -159,9 +159,10 @@ class Crawl{
 
    private function add_url_database($emails){
     foreach ($emails as $child) {
-
-      $stmt = $this->database->prepare("INSERT INTO url VALUES (null, ?)");
-      $stmt->bind_param('s', $child);
+      $timestamp = timestamp();
+      
+      $stmt = $this->database->prepare("INSERT INTO url VALUES (null, ?, ?)");
+      $stmt->bind_param('si', $child, $timestamp);
       $stmt->execute();
     }
   }
