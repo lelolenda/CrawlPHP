@@ -51,7 +51,7 @@ class Crawl{
      * @param string $arg1, int $arg2, int $arg3
      */
     public function __construct($arg1, $arg2, $arg3) {
-        if(!$this->isCli()) die("Please use php-cli!");
+        if(!$this->is_cli()) die("Please use php-cli!");
 	if (!function_exists('curl_init')) die("Please activate cURL!");
         $this->hp = $arg1;
         $this->rlevel = $arg2;
@@ -62,7 +62,7 @@ class Crawl{
      * Check if you use the php command line to run this script
      * @return boolean
      */
-    private function isCli() {
+    private function is_cli() {
         return php_sapi_name()==="cli";
     }
 	
@@ -70,7 +70,7 @@ class Crawl{
      * Get the content of the current page ($this->hp)
      * @return string
      */
-    private function getContent() {
+    private function get_content() {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->hp);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -85,7 +85,7 @@ class Crawl{
      * Make sure we don't save the same email address multiple times
      * @return array
      */
-    private  function getEmailArray() {
+    private  function get_email_array() {
         $email_pattern_normal="(([-_.\w]+@[a-zA-Z0-9_]+?\.[a-zA-Z0-9]{2,6}))";
 	$email_pattern_exp1="(\w[-._\w]*\w@\w[-._\w]*\w\.\w{2,3})";
         preg_match_all($email_pattern_normal, $this->content, $result_email_normal, PREG_PATTERN_ORDER);
@@ -116,12 +116,12 @@ class Crawl{
      * Make sure to delete duplicate entries
      * @return array
      */
-    private function getURLArray() {
+    private function get_url_array() {
 	$url_pattern='((\:href=\"|(http(s?))\://){1}\S+)';
         preg_match_all($url_pattern, $this->content, $result_url, PREG_PATTERN_ORDER);
 	array_walk($result_url[0], function(&$item) { $item = substr($item, 0, strpos($item, '"')); });
         $unique_urls=$this->array_unique_deep($result_url[0]);
-        $unique_urls=array_unique($this->setURLPrefix($unique_urls));
+        $unique_urls=array_unique($this->set_url_prefix($unique_urls));
         return $unique_urls;
     }
  
@@ -130,7 +130,7 @@ class Crawl{
      * @param URL-Array $array
      * @return array
      */
-    private function setURLPrefix($array) {
+    private function set_url_prefix($array) {
         $prefix_array=array(); $i=0;
         foreach ($array as $part) {
             if(preg_match('/^(www\.)/', $part)) $prefix_array[$i]='http://'.$part;
@@ -145,7 +145,7 @@ class Crawl{
      * Prints the result in a readable way
      * @param Email-Array $data
      */
-    private function printResult($data) {
+    private function print_result($data) {
 	foreach($data as $child) { echo "(RLevel ". $this->rlevel . ") Found: ". $child ."\n"; }
     }
 	
@@ -156,10 +156,10 @@ class Crawl{
      * @return mails
      */
     public function start() {
-       $this->content = $this->getContent();
-       $this->urls = $this->getURLArray();
-       $mails = $this->getEmailArray();
-       $this->printResult($mails);
+       $this->content = $this->get_content();
+       $this->urls = $this->get_url_array();
+       $mails = $this->get_email_array();
+       $this->print_result($mails);
        if($this->rlevel<$this->rmax) {
            foreach($this->urls as $url) {
            	$temp = new Crawl($url, $this->rlevel+1, $this->rmax);
