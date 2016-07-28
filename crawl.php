@@ -1,6 +1,6 @@
  <?php
  
- 
+
  /**
   * Crawl - Email Web Crawler
   *
@@ -45,6 +45,7 @@ else {
 
 
 class Crawl{
+    private $database = null;
 	
     /**
      * Constructor
@@ -57,7 +58,7 @@ class Crawl{
       $this->rlevel = $arg2;
       $this->rmax = $arg3;
     }
-    
+
     /**
      * Check if you use the php command line to run this script
      * @return boolean
@@ -65,7 +66,7 @@ class Crawl{
     private function is_cli() {
       return php_sapi_name()==="cli";
     }
-    
+
     /**
      * Get the content of the current page ($this->hp)
      * @return string
@@ -78,8 +79,8 @@ class Crawl{
       curl_close($ch);
       return $content;
     }
-    
-    
+
+
     /**
      * Use the content to create an email array
      * Make sure we don't save the same email address multiple times
@@ -94,7 +95,7 @@ class Crawl{
       $unique_emails=$this->array_unique_deep($email_array);
       return $unique_emails;
     }
-    
+
     /**
      * Deletes duplicate values on multi dimensional arrays
      * @return array
@@ -124,7 +125,7 @@ class Crawl{
      $unique_urls=array_unique($this->set_url_prefix($unique_urls));
      return $unique_urls;
    }
-   
+
     /**
      * A little function to set www/http prefixes
      * @param URL-Array $array
@@ -140,7 +141,7 @@ class Crawl{
       return $prefix_array;
     }
 
-    
+
     /**
      * Prints the result in a readable way
      * @param Email-Array $data
@@ -148,7 +149,7 @@ class Crawl{
     private function print_result($data) {
      foreach($data as $child) { echo "(RLevel ". $this->rlevel . ") Found: ". $child ."\n"; }
    }
-   
+
     /**
      * Start-function with recursion
      * Creates new instances depending on recursion depth
