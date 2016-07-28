@@ -46,6 +46,11 @@ else {
 
 class Crawl{
     private $database = null;
+    private $hp = null;
+    private $content = null;
+    private $url = null;
+    private $rlevel = 0;
+    private $rmax = 0;
 	
     /**
      * Constructor
