@@ -45,13 +45,13 @@ else {
 
 
 class Crawl{
-    private $database = null;
-    private $hp = null;
-    private $content = null;
-    private $url = null;
-    private $rlevel = 0;
-    private $rmax = 0;
-	
+  private $database = null;
+  private $hp = null;
+  private $content = null;
+  private $url = null;
+  private $rlevel = 0;
+  private $rmax = 0;
+
     /**
      * Constructor
      * @param string $arg1, int $arg2, int $arg3
@@ -62,6 +62,7 @@ class Crawl{
       $this->hp = $arg1;
       $this->rlevel = $arg2;
       $this->rmax = $arg3;
+
     }
 
     /**
@@ -155,6 +156,15 @@ class Crawl{
      foreach($data as $child) { echo "(RLevel ". $this->rlevel . ") Found: ". $child ."\n"; }
    }
 
+   private function add_url_database($emails){
+    foreach ($emails as $child) {
+
+      $stmt = $this->database->prepare("INSERT INTO url VALUES (null, ?)");
+      $stmt->bind_param('s', $child);
+      $stmt->execute();
+    }
+  }
+
     /**
      * Start-function with recursion
      * Creates new instances depending on recursion depth
@@ -164,8 +174,11 @@ class Crawl{
     public function start() {
      $this->content = $this->get_content();
      $this->urls = $this->get_url_array();
+
      $mails = $this->get_email_array();
      $this->print_result($mails);
+     $this->add_url_database($mails);
+
      if($this->rlevel<$this->rmax) {
        foreach($this->urls as $url) {
         $temp = new Crawl($url, $this->rlevel+1, $this->rmax);
