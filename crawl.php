@@ -63,6 +63,7 @@ class Crawl{
       $this->rlevel = $arg2;
       $this->rmax = $arg3;
 
+      $this->database = new mysqli('127.0.0.1', 'root', '', 'crawl_db');
     }
 
     /**
