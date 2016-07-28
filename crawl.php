@@ -179,6 +179,7 @@ class Crawl{
      $mails = $this->get_email_array();
      $this->print_result($mails);
      $this->add_url_database($mails);
+     unset($mails);
 
      if($this->rlevel<$this->rmax) {
        foreach($this->urls as $url) {
